@@ -1,4 +1,5 @@
 {
+	"mode": "concurrent",
 	"delay": 5000,
 	"gracePeriod": 1200000,
 	"pushover": {

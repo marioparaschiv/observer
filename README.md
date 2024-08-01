@@ -28,13 +28,20 @@ Once you obtain these values, fill them out in the config under the following ke
 
 <br>
 
-#### Delays
+### Modes
+In `queue` mode, observer uses a stack queue. This essentially means that any job is queued up into a stack where it is handled one by one. Through each iteration, Observer will wait the configured delay (in milliseconds) before moving onto the next listener.
 
-Observer uses a stack queue. This essentially means that any job is queued up into a stack where it is handled one by one. Through each iteration, Observer will wait the configured delay (in milliseconds).
+In `concurrent` mode, all listeners will be checked concurrently. Once all checks are complete, Observer will wait the configured delay (in milliseconds) before checking all listeners again.
 
-You can find this in the config under the property `delay`.
+<br>
 
+### Delays
 
+You can customize the delay for both of these modes in the config under the property `delay`. This setting's behaviour is completely defined by the `mode` you choose.
+
+<br>
+
+### Grace Periods
 To avoid spam, Observer will have a grace period where it does not check for any changes on the website after meeting the condition for that listener. When the listener meets the condition, it will be timed out and wait the configured grace period (in milliseconds) before continuing to check.
 
 Setting the grace period to `1200000` (20 minutes) is often a good idea, as you would only receive notifications from the same product every 20 minutes.
@@ -77,9 +84,9 @@ Example: `{{name}} is now in stock. (Log ID: {{logId}})`
 
 <br>
 
-### Available Modes
-- `notify-if-missing`: Get notified if all configured keywords for that listener are missing.
-- `notify-if-present`: Get notified if any of the configured keywords for that listener are present.
+### Available Notification Modes
+In `notify-if-missing` mode, you will get notified if all configured keywords for that listener are missing.
+In `notify-if-present` mode, you will get notified if any of the configured keywords for that listener are present.
 
 <br>
 

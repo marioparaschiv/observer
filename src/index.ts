@@ -1,79 +1,46 @@
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import type { StackItem } from '~/types.d.ts';
+import { createLogger } from '~/lib/logger';
 import puppeteer from 'puppeteer-extra';
 import config from '~/../config.json';
-import notify from '~/pushover';
-import moment from 'moment';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { LOG_PATH, LOGS_PATH } from '~/constants';
+import handler from '~/lib/handler';
 
 puppeteer.use(StealthPlugin());
 
-const timeouts = new Map();
+const logger = createLogger('Observer');
 
 async function run() {
-	console.log('Launching browser...');
+	logger.info('Launching browser...');
 	const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
-	console.log('Browser launched.\n');
+	logger.info('Browser launched.');
 
 	const stack: StackItem[] = [];
 
 	for (const listener of config.listeners) {
 		const index = config.listeners.indexOf(listener);
 		const page = await browser.newPage();
+		const logger = createLogger('Observer', listener.name);
 
 		await page.goto(listener.url);
-		stack.push({ page, index, listener });
+		stack.push({ page, index, listener, logger });
 	}
 
-
 	while (stack.length) {
-		const { page, listener, index } = stack.shift()!;
+		switch (config.mode) {
+			case 'concurrent': {
+				const items = [...stack];
+				stack.length = 0;
 
-		const timeout = timeouts.get(index);
-		const gracePeriod = timeout && timeout.diff(moment());
-
-		if (timeout && gracePeriod <= 0) {
-			timeouts.delete(index);
-		} else if (gracePeriod) {
-			console.log(`Pushing ${listener.url} at the end of the stack as it is in a grace period of ${gracePeriod}ms.`);
-			stack.push({ page, listener, index });
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			continue;
-		} else {
-			timeouts.delete(index);
-		}
-
-		console.log(`Checking ${listener.url}...`);
-
-		await page.bringToFront();
-		await page.reload();
-
-		const text = await page.$eval('*', (element) => element.innerText?.toLowerCase());
-		const id = Date.now();
-
-		if (!existsSync(LOGS_PATH)) mkdirSync(LOGS_PATH);
-		writeFileSync(LOG_PATH(id), text, 'utf-8');
-
-		switch (listener.mode) {
-			case 'notify-if-missing': {
-				if (listener.keywords.every(k => !text.includes(k))) {
-					notify(listener.name, listener['pushover-priority'] ?? 0, listener.url, listener.message, id);
-					timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
-				}
+				await Promise.allSettled(items.map(async (item) => await handler(stack, item)));
 			} break;
-
-			case 'notify-if-present': {
-				if (listener.keywords.some(k => text.includes(k))) {
-					notify(listener.name, listener['pushover-priority'] ?? 0, listener.url, listener.message, id);
-					timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
-				}
+			case 'queue': {
+				const item = stack.shift();
+				await handler(stack, item);
 			} break;
 		}
 
-		console.log(`Check completed for ${listener.url}. Timing out for ${config.delay}ms.\n`);
+		logger.info(`Timing out for ${config.delay}ms.`);
 		await new Promise((resolve) => setTimeout(resolve, config.delay));
-		stack.push({ page, listener, index });
 	}
 }
 
