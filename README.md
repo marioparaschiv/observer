@@ -35,7 +35,7 @@ You can find this in the config under the property `delay`.
 
 To avoid spam, Observer will have a grace period where it does not check for any changes on the website after meeting the condition for that listener. When the listener meets the condition, it will be timed out and wait the configured grace period (in milliseconds) before continuing to check.
 
-Setting the grace period to `1200000` (20 minutes) is often a good idea as you would only receive notifications from the same product every 20 minutes.
+Setting the grace period to `1200000` (20 minutes) is often a good idea, as you would only receive notifications from the same product every 20 minutes.
 
 You can find this in the config under the property `gracePeriod`.
 
@@ -56,7 +56,7 @@ Observer operates on listeners. An example of a listener:
 
 Each listener can have its own name, which will be used inside the pushover notification.
 
-For example, if we set the name property to `Dyson Hoover`: by default, we would receive the following notification: `Dyson Hoover matched the observer conditions. (Log ID: 1234)`
+For example, if we set the name property to `Dyson Hoover`, by default, we would receive the following notification: `Dyson Hoover matched the observer conditions. (Log ID: 1234)`
 
 #### Customizing Notifications
 You can customize the message you receive by adding the "message" property to a listener. This is not a necessary property, if it is not provided, the default message mentioned in the above section will be used.
