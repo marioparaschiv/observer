@@ -1,0 +1,29 @@
+{
+	"delay": 5000,
+	"gracePeriod": 1200000,
+	"pushover": {
+		"api-key": "KEY",
+		"user-key": "KEY"
+	},
+	"listeners": [
+		{
+			"name": "Name",
+			"url": "https://url.com/product",
+			"mode": "notify-if-missing",
+			"pushover-priority": 0,
+			"keywords": [
+				"this item is out of stock",
+				"out of stock"
+			]
+		},
+		{
+			"name": "Name",
+			"url": "https://url.com/product",
+			"mode": "notify-if-present",
+			"pushover-priority": 2,
+			"keywords": [
+				"in stock"
+			]
+		}
+	]
+}
