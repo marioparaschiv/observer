@@ -5,6 +5,6 @@
 		"dist",
 		".git",
 		"node_modules",
-		"logs"
+		"snapshots"
 	]
 }

@@ -1,9 +1,9 @@
+import { SNAPSHOT_PATH, SNAPSHOTS_PATH } from '~/constants';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import type { StackItem } from '~/types';
 import config from '~/../config.json';
 import notify from '~/lib/pushover';
 import moment from 'moment';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { LOG_PATH, LOGS_PATH } from '~/constants';
 
 const timeouts = new Map();
 
@@ -27,32 +27,51 @@ async function handler(stack: StackItem[], item: StackItem) {
 
 	await page.reload();
 
+	if (listener['wait-after-load']) {
+		await new Promise(r => setTimeout(r, listener['wait-after-load']));
+		logger.info(`Waited ${listener['wait-after-load']}ms after the page loaded.`);
+	}
+
 	const text = await page.$eval('*', (element: HTMLElement) => element.innerText?.toLowerCase());
 	const logId = Date.now();
 
 	if (config.saveSnapshots) {
-		if (!existsSync(LOGS_PATH)) mkdirSync(LOGS_PATH);
-		writeFileSync(LOG_PATH(logId), text, 'utf-8');
+		if (!existsSync(SNAPSHOTS_PATH)) mkdirSync(SNAPSHOTS_PATH);
+
+		writeFileSync(SNAPSHOT_PATH(logId), [
+			'=============================',
+			JSON.stringify(listener, null, 2),
+			'=============================',
+			'',
+			text
+		].join('\n'), 'utf-8');
 	}
 
-	switch (listener.mode) {
-		case 'notify-if-missing': {
-			if (listener.keywords.some(k => !text.includes(k))) {
-				notify(item, logId);
-				timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
-			}
-		} break;
+	if (listener['unsuccessful-keywords'].some(k => text.includes(k))) {
+		logger.error(`Matched unsuccessful keyword. Please check snapshot.`);
 
-		case 'notify-if-present': {
-			if (listener.keywords.some(k => text.includes(k))) {
-				notify(item, logId);
-				timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
-			}
-		} break;
+
+	} else {
+		switch (listener.mode) {
+			case 'notify-if-missing': {
+				if (listener.keywords.some(k => !text.includes(k))) {
+					notify(item, logId);
+					timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
+				}
+			} break;
+
+			case 'notify-if-present': {
+				if (listener.keywords.some(k => text.includes(k))) {
+					notify(item, logId);
+					timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
+				}
+			} break;
+		}
+
+		logger.success(`Check completed for ${listener.url}.`);
 	}
 
 	stack.push(item);
-	logger.success(`Check completed for ${listener.url}.`);
 }
 
 export default handler;

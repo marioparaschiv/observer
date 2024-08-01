@@ -41,6 +41,22 @@ You can customize the delay for both of these modes in the config under the prop
 
 <br>
 
+### Unsuccessful Keywords
+
+To avoid false positives, you can provide an array of strings under `unsuccessful-keywords` for each listener. Example:
+```json
+"unsuccessful-keywords": [
+	"robot",
+	"access denied"
+],
+```
+
+<br>
+
+### Wait after load
+
+Some websites fetch data after the page is loaded. To combat this, you can set `wait-after-load` on any listener with a delay in milliseconds
+
 ### Grace Periods
 To avoid spam, Observer will have a grace period where it does not check for any changes on the website after meeting the condition for that listener. When the listener meets the condition, it will be timed out and wait the configured grace period (in milliseconds) before continuing to check.
 
@@ -90,7 +106,7 @@ In `notify-if-present` mode, you will get notified if any of the configured keyw
 
 <br>
 
-### Snapshots / Logs
+### Snapshots
 
 You can choose to save snapshots of each check through the `saveSnapshots` config option.
 This will save a file with the text content of the website to more easily diagnose issues or errors.

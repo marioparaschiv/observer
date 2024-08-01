@@ -1,5 +1,5 @@
-import config from '~/../config.json';
 import type { StackItem } from '~/types';
+import config from '~/../config.json';
 
 async function notify(item: StackItem, logId: number) {
 	const { listener, logger } = item;
@@ -9,7 +9,7 @@ async function notify(item: StackItem, logId: number) {
 	const link = listener.url;
 	const message = listener.message;
 
-	logger.info(`Notifying "${name}" with priority ${priority}.`);
+	logger.info(`Notifying "${name}" with priority ${priority}. (Log ID: ${logId})`);
 
 	const url = new URL('https://api.pushover.net/1/messages.json');
 

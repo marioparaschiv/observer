@@ -5,6 +5,7 @@ config.json
 
 # Logs
 
+snapshots
 logs
 _.log
 npm-debug.log_

@@ -21,6 +21,15 @@ async function run() {
 		const page = await browser.newPage();
 		const logger = createLogger('Observer', listener.name);
 
+		await page.setRequestInterception(true);
+		page.on('request', async (request) => {
+			if (['image', 'font', 'stylesheet'].includes(request.resourceType())) {
+				await request.abort();
+			} else {
+				await request.continue();
+			}
+		});
+
 		await page.goto(listener.url);
 		stack.push({ page, index, listener, logger });
 	}

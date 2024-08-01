@@ -1,4 +1,4 @@
 import { join } from 'path';
 
-export const LOGS_PATH = join(__dirname, '..', 'logs');
-export const LOG_PATH = (id: number) => join(LOGS_PATH, `${id}.txt`);
+export const SNAPSHOTS_PATH = join(__dirname, '..', 'snapshots');
+export const SNAPSHOT_PATH = (id: number) => join(SNAPSHOTS_PATH, `${id}.txt`);

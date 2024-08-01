@@ -11,8 +11,13 @@
 		{
 			"name": "Name",
 			"url": "https://url.com/product",
+			"wait-after-load": 5000,
 			"mode": "notify-if-missing",
 			"pushover-priority": 0,
+			"unsuccessful-keywords": [
+				"robot",
+				"access denied"
+			],
 			"keywords": [
 				"this item is out of stock",
 				"out of stock"
