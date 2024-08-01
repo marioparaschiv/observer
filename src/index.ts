@@ -13,7 +13,7 @@ const timeouts = new Map();
 
 async function run() {
 	console.log('Launching browser...');
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
 	console.log('Browser launched.\n');
 
 	const stack: StackItem[] = [];
