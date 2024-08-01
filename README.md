@@ -16,7 +16,7 @@ Setting Observer up is simple and straight forward.
 - First, create a `config.json` and copy the contents of `sample_config.json` into it.
 - Fill out the configurable values to your preference, then build the source and run it.
 
-Observer uses [Pushover](https://pushover.net/), you will need an account along with an Application API key and a User/Group key.
+Observer uses [Pushover](https://pushover.net/). You will need an account along with an Application API key and a User/Group key.
 
 Once you obtain these values, fill them out in the config under the following keys:
 ```json
@@ -25,6 +25,8 @@ Once you obtain these values, fill them out in the config under the following ke
 	"user-key": "KEY"
 },
 ```
+
+<br>
 
 #### Delays
 
@@ -39,7 +41,9 @@ Setting the grace period to `1200000` (20 minutes) is often a good idea, as you 
 
 You can find this in the config under the property `gracePeriod`.
 
-#### Listeners
+<br>
+
+### Listeners
 Observer operates on listeners. An example of a listener:
 ```json
 {
@@ -58,7 +62,9 @@ Each listener can have its own name, which will be used inside the pushover noti
 
 For example, if we set the name property to `Dyson Hoover`, by default, we would receive the following notification: `Dyson Hoover matched the observer conditions. (Log ID: 1234)`
 
-#### Customizing Notifications
+<br>
+
+### Customizing Notifications
 You can customize the message you receive by adding the "message" property to a listener. This is not a necessary property, if it is not provided, the default message mentioned in the above section will be used.
 
 You can use the following variables inside your message:
@@ -69,12 +75,13 @@ You can use the following variables inside your message:
 
 Example: `{{name}} is now in stock. (Log ID: {{logId}})`
 
-#### Available Modes
+<br>
+
+### Available Modes
 - `notify-if-missing`: Get notified if all configured keywords for that listener are missing.
 - `notify-if-present`: Get notified if any of the configured keywords for that listener are present.
 
 <br>
-
 
 ## Setup
 - `[pnpm | yarn | npm | bun] run build`
