@@ -37,7 +37,7 @@ async function handler(stack: StackItem[], item: StackItem) {
 
 	switch (listener.mode) {
 		case 'notify-if-missing': {
-			if (listener.keywords.every(k => !text.includes(k))) {
+			if (listener.keywords.some(k => !text.includes(k))) {
 				notify(item, logId);
 				timeouts.set(index, moment().add(config.gracePeriod, 'ms'));
 			}

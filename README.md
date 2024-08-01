@@ -85,7 +85,7 @@ Example: `{{name}} is now in stock. (Log ID: {{logId}})`
 <br>
 
 ### Available Notification Modes
-In `notify-if-missing` mode, you will get notified if all configured keywords for that listener are missing.
+In `notify-if-missing` mode, you will get notified if any of the configured keywords for that listener are missing.
 In `notify-if-present` mode, you will get notified if any of the configured keywords for that listener are present.
 
 <br>
