@@ -30,8 +30,10 @@ async function handler(stack: StackItem[], item: StackItem) {
 	const text = await page.$eval('*', (element: HTMLElement) => element.innerText?.toLowerCase());
 	const logId = Date.now();
 
-	if (!existsSync(LOGS_PATH)) mkdirSync(LOGS_PATH);
-	writeFileSync(LOG_PATH(logId), text, 'utf-8');
+	if (config.saveSnapshots) {
+		if (!existsSync(LOGS_PATH)) mkdirSync(LOGS_PATH);
+		writeFileSync(LOG_PATH(logId), text, 'utf-8');
+	}
 
 	switch (listener.mode) {
 		case 'notify-if-missing': {

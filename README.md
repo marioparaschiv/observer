@@ -90,6 +90,13 @@ In `notify-if-present` mode, you will get notified if any of the configured keyw
 
 <br>
 
+### Snapshots / Logs
+
+You can choose to save snapshots of each check through the `saveSnapshots` config option.
+This will save a file with the text content of the website to more easily diagnose issues or errors.
+
+<br>
+
 ## Setup
 - `[pnpm | yarn | npm | bun] run build`
 - `[node | bun] .`
