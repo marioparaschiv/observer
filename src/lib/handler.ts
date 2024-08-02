@@ -32,6 +32,22 @@ async function handler(stack: StackItem[], item: StackItem) {
 		logger.info(`Waited ${listener['wait-after-load']}ms after the page loaded.`);
 	}
 
+	const selectors = listener['wait-for-selectors'];
+	if (selectors?.length) {
+		await new Promise(async (resolve) => {
+			for (const selector of selectors) {
+				try {
+					await page.waitForSelector(selector, { timeout: 0 });
+					logger.success(`Found selector "${selector}"`);
+				} catch (error) {
+					logger.warn(`Failed to wait for "${selector}" selector:`, error);
+				}
+			}
+
+			resolve(null);
+		});
+	}
+
 	const text = await page.$eval('*', (element: HTMLElement) => element.innerText?.toLowerCase());
 	const logId = Date.now();
 

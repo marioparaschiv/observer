@@ -57,6 +57,19 @@ To avoid false positives, you can provide an array of strings under `unsuccessfu
 
 Some websites fetch data after the page is loaded. To combat this, you can set `wait-after-load` on any listener with a delay in milliseconds
 
+<br>
+
+### Wait for selectors
+
+You can wait for a certain selector to be available by adding the CSS selector to a listener's `wait-for-selectors` array like so:
+```json
+"wait-for-selectors": [
+	".buybox-wrapper"
+],
+```
+
+<br>
+
 ### Grace Periods
 To avoid spam, Observer will have a grace period where it does not check for any changes on the website after meeting the condition for that listener. When the listener meets the condition, it will be timed out and wait the configured grace period (in milliseconds) before continuing to check.
 

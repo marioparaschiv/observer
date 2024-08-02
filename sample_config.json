@@ -11,7 +11,9 @@
 		{
 			"name": "Name",
 			"url": "https://url.com/product",
-			"wait-after-load": 5000,
+			"wait-for-selectors": [
+				".buybox-wrapper"
+			],
 			"mode": "notify-if-missing",
 			"pushover-priority": 0,
 			"unsuccessful-keywords": [
@@ -27,6 +29,7 @@
 			"name": "Name",
 			"url": "https://url.com/product",
 			"mode": "notify-if-present",
+			"wait-after-load": 5000,
 			"pushover-priority": 2,
 			"keywords": [
 				"in stock"
