@@ -11,11 +11,18 @@
 		{
 			"name": "Name",
 			"url": "https://url.com/product",
-			"wait-for-selectors": [
-				".buybox-wrapper"
-			],
 			"mode": "notify-if-missing",
 			"pushover-priority": 0,
+			"wait-for-selectors": [
+				".buybox-wrapper",
+				[
+					".buybox",
+					{
+						"timeout": 3000
+					}
+				]
+			],
+			"selector-timeout-behaviour": "skip",
 			"unsuccessful-keywords": [
 				"robot",
 				"access denied"

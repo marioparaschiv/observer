@@ -68,6 +68,23 @@ You can wait for a certain selector to be available by adding the CSS selector t
 ],
 ```
 
+You may also pass [puppeteer waitForSelector options](https://pptr.dev/api/puppeteer.waitforselectoroptions/) options such as a timeout for a specific selector like so:
+```json
+"wait-for-selectors": [
+	".buybox",
+	[
+		".buybox-wrapper",
+		{
+			"timeout": 3000
+		}
+	]
+],
+```
+
+You may also control the behaviour of a missing selector with the listener property `selector-timeout-behaviour`. This property has two values:
+- In `skip` mode, Observer will not continue checking for the keywords and will instead skip over that iteration of the listener.
+- In `resume` mode, Observer will continue as usual and check if the URL matches the configured conditions. (WARNING! If one of the keywords is inside of the selector that wasn't found, a false positive notification will be sent. In this case, it is advised to use `skip` mode)
+
 <br>
 
 ### Grace Periods

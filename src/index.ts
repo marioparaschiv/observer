@@ -11,7 +11,7 @@ const logger = createLogger('Observer');
 
 async function run() {
 	logger.info('Launching browser...');
-	const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true, protocolTimeout: 0 });
 	logger.info('Browser launched.');
 
 	const stack: StackItem[] = [];
@@ -21,7 +21,10 @@ async function run() {
 		const page = await browser.newPage();
 		const logger = createLogger('Observer', listener.name);
 
+		await page.setDefaultTimeout(0);
 		await page.setRequestInterception(true);
+		await page.setDefaultNavigationTimeout(0);
+
 		page.on('request', async (request) => {
 			if (['image', 'font', 'stylesheet'].includes(request.resourceType())) {
 				await request.abort();
@@ -35,17 +38,21 @@ async function run() {
 	}
 
 	while (stack.length) {
-		switch (config.mode) {
-			case 'concurrent': {
-				const items = [...stack];
-				stack.length = 0;
+		try {
+			switch (config.mode) {
+				case 'concurrent': {
+					const items = [...stack];
+					stack.length = 0;
 
-				await Promise.allSettled(items.map(async (item) => await handler(stack, item)));
-			} break;
-			case 'queue': {
-				const item = stack.shift();
-				await handler(stack, item);
-			} break;
+					await Promise.allSettled(items.map(async (item) => await handler(stack, item)));
+				} break;
+				case 'queue': {
+					const item = stack.shift();
+					await handler(stack, item);
+				} break;
+			}
+		} catch (error) {
+			logger.error('Received an error while handling listener:', error);
 		}
 
 		logger.info(`Timing out for ${config.delay}ms.`);

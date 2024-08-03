@@ -33,19 +33,32 @@ async function handler(stack: StackItem[], item: StackItem) {
 	}
 
 	const selectors = listener['wait-for-selectors'];
+	const timeoutBehaviour = listener['selector-timeout-behaviour'] ?? 'skip';
+	let failed = false;
+
 	if (selectors?.length) {
 		await new Promise(async (resolve) => {
-			for (const selector of selectors) {
+			for (const item of selectors) {
+				const selector = Array.isArray(item) ? item[0] : item;
+				const options = Array.isArray(item) ? item[1] : { timeout: 0 };
+
 				try {
-					await page.waitForSelector(selector, { timeout: 0 });
-					logger.success(`Found selector "${selector}"`);
+					await page.waitForSelector(selector, options);
+					logger.success(`Found selector "${item}"`);
 				} catch (error) {
-					logger.warn(`Failed to wait for "${selector}" selector:`, error);
+					logger.warn(`Failed to wait for "${item}" selector:`, error);
+					failed = true;
 				}
 			}
 
 			resolve(null);
 		});
+	}
+
+	if (failed && timeoutBehaviour === 'skip') {
+		logger.warn(`Skipping checks as the selector timed out.`);
+		stack.push(item);
+		return;
 	}
 
 	const text = await page.$eval('*', (element: HTMLElement) => element.innerText?.toLowerCase());
