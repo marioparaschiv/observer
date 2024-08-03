@@ -40,7 +40,7 @@ async function handler(stack: StackItem[], item: StackItem) {
 		await new Promise(async (resolve) => {
 			for (const item of selectors) {
 				const selector = Array.isArray(item) ? item[0] : item;
-				const options = Array.isArray(item) ? item[1] : { timeout: 0 };
+				const options = Array.isArray(item) ? item[1] : {};
 
 				try {
 					await page.waitForSelector(selector, options);
