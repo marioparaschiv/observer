@@ -43,8 +43,12 @@ async function handler(stack: StackItem[], item: StackItem) {
 				const options = Array.isArray(item) ? item[1] : {};
 
 				try {
+					const start = Date.now();
+					logger.info(`Waiting for selector "${item}"...`);
 					await page.waitForSelector(selector, options);
-					logger.success(`Found selector "${item}"`);
+					const end = Date.now() - start;
+
+					logger.success(`Found selector "${item}" after ${end}ms.`);
 				} catch (error) {
 					logger.warn(`Failed to wait for "${item}" selector:`, error);
 					failed = true;
